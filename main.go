@@ -12,31 +12,32 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-//Number A struct that represents a new number to be addeded
+// Number A struct that represents a new number to be addeded
 type Number struct {
 	Country   string `json:"country"`
 	Number    string `json:"number"`
+	URL       string `json:"url"`
 	CreatedAt string `json:"created_at"`
 }
 
-//Message a struct which represents the message
+// Message a struct which represents the message
 type Message struct {
 	Body       string `json:"body"`
 	CreatedAt  string `json:"created_at"`
 	Originator string `json:"originator"`
 }
 
-//Numbers A list of Number type
+// Numbers A list of Number type
 type Numbers []Number
 
-//Messages A list of Message type
+// Messages A list of Message type
 type Messages []Message
 
 func exitFatal(err error) {
 	log.Fatal(err)
 }
 
-//DB The database functions group
+// DB The database functions group
 type DB struct {
 }
 
@@ -180,8 +181,10 @@ func displayInitParameters() int {
 }
 
 func getAvailNumbers() *Numbers {
-
-	numArray := ScrapeAvailableNumbers()
+	numArray, err := defaultProvider.ListNumbers()
+	if err != nil {
+		log.Fatalf("Failed to fetch available numbers: %v\n", err)
+	}
 	numbers := Numbers(numArray)
 	return &numbers
 }
@@ -308,7 +311,10 @@ func checkMessages(enableFilter bool) {
 		selectedNumber := &(*numbers)[idx]
 		fmt.Printf("Selected %s, fetching messages\n", selectedNumber)
 
-		messagesArray := ScrapeMessagesForNumber(selectedNumber.Number)
+		messagesArray, err := defaultProvider.Messages(*selectedNumber)
+		if err != nil {
+			log.Fatalf("Failed to fetch messages for %s: %v\n", selectedNumber.Number, err)
+		}
 
 		//check message
 		messages := Messages(messagesArray)
@@ -364,9 +370,6 @@ func shouldIncludeFilter() bool {
 }
 
 func main() {
-
-	ScrapeAvailableNumbers()
-
 	for true {
 		idx := displayInitParameters()
 

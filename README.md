@@ -1,7 +1,7 @@
 ## Fake-SMS
 A simple command line tool using which you can skip phone number based SMS verification by using a temporary phone number that acts like a proxy.
 
-**Latest update : The tool no longer uses upmasked.com, as the service went down. We are using another provider which provides more phone numbers across more countries. Make sure you pull the main branch before compiling.**
+**Latest update : The tool now scrapes receivesms.co. The previous provider (receive-smss.com) put its site behind a Cloudflare challenge that blocks non-interactive clients, which made the tool crash on start. Numbers saved under the old provider cannot be used any more — remove them and add new ones. Make sure you pull the main branch before compiling.**
 
 ### Features:
 * Written in Go-1.15 (with modules support enabled)
@@ -18,6 +18,7 @@ export GOBIN=$PWD/bin
 go install
 ```
 This will build the binary and place it in `bin/`.
+Note that `bin/` is not on your `PATH`, so run it as `./bin/fake-sms` (or add `bin/` to your `PATH`); a bare `fake-sms` will report `command not found`.
 You can also consider using the pre-built binary which is available under `bin/`
 
 #### Steps to use:
